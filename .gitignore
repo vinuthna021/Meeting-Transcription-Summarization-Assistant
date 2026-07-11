@@ -1,0 +1,29 @@
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local configuration and credentials
+.env
+.env.local
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Application Logs
+logs/*.log
+*.log
+
+# Audio files and cache
+data/
+sample_audio/*.wav
+sample_audio/*.mp3
+sample_audio/*.m4a
+
+# IDE metadata
+.vscode/
+.idea/
