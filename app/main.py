@@ -573,6 +573,36 @@ def main():
         initial_sidebar_state="expanded"
     )
 
+    # Check settings validation
+    from config.settings import settings
+    if not settings.is_valid:
+        render_header()
+        st.error("🔑 **Azure Credentials Missing or Invalid**")
+        st.info(
+            "To deploy and run this application on Streamlit Community Cloud, you must configure "
+            "your Azure credentials using the Streamlit Secrets manager."
+        )
+        st.markdown(f"""
+        **Validation Error Details:**
+        > `{settings.validation_error}`
+        
+        ### How to fix:
+        1. Open your Streamlit Community Cloud dashboard.
+        2. Find your deployed app and click **Settings** -> **Secrets**.
+        3. Copy-paste your keys using the following TOML template:
+        ```toml
+        AZURE_SPEECH_KEY = "your_84_character_azure_speech_key"
+        AZURE_SPEECH_REGION = "eastus"
+        AZURE_LANGUAGE_KEY = "your_32_character_azure_language_key"
+        AZURE_LANGUAGE_ENDPOINT = "https://cog--lang.cognitiveservices.azure.com/"
+        AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=your_account;AccountKey=your_key;EndpointSuffix=core.windows.net"
+        BLOB_CONTAINER_NAME = "meeting-data"
+        ```
+        4. Save the secrets and wait for the app to hot-reload.
+        """)
+        render_footer()
+        return
+
     # Initialize variables
     init_session_state()
     pipeline_service = get_pipeline_service()

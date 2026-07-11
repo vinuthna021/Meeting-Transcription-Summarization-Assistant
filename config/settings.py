@@ -45,8 +45,15 @@ class Settings:
         self.AZURE_STORAGE_CONNECTION_STRING: str = os.getenv("AZURE_STORAGE_CONNECTION_STRING", "").strip()
         self.BLOB_CONTAINER_NAME: str = os.getenv("BLOB_CONTAINER_NAME", "meeting-data").strip()
 
+        self.is_valid = True
+        self.validation_error = None
+
         # Automatically trigger configuration validation at instantiation
-        self.validate()
+        try:
+            self.validate()
+        except ConfigurationError as e:
+            self.is_valid = False
+            self.validation_error = str(e)
 
     def validate(self) -> None:
         """
