@@ -632,7 +632,7 @@ def main():
         The Azure Speech SDK could not be initialized with the provided credentials.
         
         **Error Details:**
-        > `{str(e)}`
+        > `{getattr(e, 'user_message', str(e))}`
         
         ### Troubleshooting:
         * **Check key length/value:** Ensure your `AZURE_SPEECH_KEY` is a valid subscription key.
