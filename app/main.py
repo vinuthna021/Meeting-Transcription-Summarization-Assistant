@@ -585,7 +585,6 @@ def main():
         # Safely list keys currently present in streamlit secrets for diagnostics
         present_keys = []
         try:
-            import streamlit as st
             if hasattr(st, "secrets") and st.secrets:
                 present_keys = list(st.secrets.keys())
         except Exception:
