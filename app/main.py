@@ -658,6 +658,29 @@ def main():
 > The key you have entered is an 84-character token or string, which is rejected by the SDK library on Linux.
 """
 
+        # Run a native SDK initialization test with different key lengths to diagnose
+        sdk_test_results = []
+        try:
+            import azure.cognitiveservices.speech as speechsdk
+            # Test 1: Real key
+            try:
+                test_config = speechsdk.SpeechConfig(subscription=settings.AZURE_SPEECH_KEY, region=settings.AZURE_SPEECH_REGION)
+                sdk_test_results.append("- **Real 84-char key**: ✅ Initialized successfully.")
+            except Exception as test_err:
+                sdk_test_results.append(f"- **Real 84-char key**: ❌ Failed with: `{str(test_err)}`")
+                
+            # Test 2: Mock 32-char key
+            try:
+                mock_key = "a" * 32
+                test_config = speechsdk.SpeechConfig(subscription=mock_key, region=settings.AZURE_SPEECH_REGION)
+                sdk_test_results.append("- **Mock 32-char key**: ✅ Initialized successfully.")
+            except Exception as test_err:
+                sdk_test_results.append(f"- **Mock 32-char key**: ❌ Failed with: `{str(test_err)}`")
+        except Exception as test_err:
+            sdk_test_results.append(f"- **SDK Test Suite**: ❌ Failed to run tests: `{str(test_err)}`")
+
+        sdk_test_results_md = "\n".join(sdk_test_results)
+
         st.markdown(f"""
         The Azure Speech SDK could not be initialized with the provided credentials.
         
@@ -665,6 +688,9 @@ def main():
         > `{getattr(e, 'user_message', str(e))}`
         
         {key_warning_md}
+        
+        **Native SDK Constructor Test Results:**
+        {sdk_test_results_md}
         
         **Loaded Settings Diagnostics (Obfuscated):**
         {diagnostics_md}
