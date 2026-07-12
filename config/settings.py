@@ -171,4 +171,8 @@ class Settings:
         logger.info("All configuration settings loaded and validated successfully.")
 
 # Export a single global instance for application-wide importing
-settings = Settings()
+# We register it on the sys module to guarantee a single reference is shared even if this file is imported twice under different namespaces
+import sys
+if not hasattr(sys, "_global_settings_instance"):
+    sys._global_settings_instance = Settings()
+settings = sys._global_settings_instance
