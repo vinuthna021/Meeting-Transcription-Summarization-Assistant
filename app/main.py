@@ -12,7 +12,7 @@ from utils.logger import logger
 
 # Initialize PipelineService (singleton instance cached in Streamlit)
 @st.cache_resource
-def get_pipeline_service() -> PipelineService:
+def get_pipeline_service_v2() -> PipelineService:
     return PipelineService()
 
 def init_session_state():
@@ -615,7 +615,7 @@ def main():
 
     # Initialize variables
     init_session_state()
-    pipeline_service = get_pipeline_service()
+    pipeline_service = get_pipeline_service_v2()
     try:
         pipeline_service.initialize()
     except Exception as e:

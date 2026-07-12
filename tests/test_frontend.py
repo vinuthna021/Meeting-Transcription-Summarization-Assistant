@@ -62,7 +62,7 @@ class TestFrontendDashboard(unittest.TestCase):
         mock_instance = MagicMock()
         mock_pipeline_class.return_value = mock_instance
         
-        service = main_app.get_pipeline_service()
+        service = main_app.get_pipeline_service_v2()
         
         self.assertEqual(service, mock_instance)
 
