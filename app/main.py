@@ -13,9 +13,7 @@ from utils.logger import logger
 # Initialize PipelineService (singleton instance cached in Streamlit)
 @st.cache_resource
 def get_pipeline_service() -> PipelineService:
-    service = PipelineService()
-    service.initialize()
-    return service
+    return PipelineService()
 
 def init_session_state():
     """Initializes session state keys for history and current selection."""
@@ -617,8 +615,9 @@ def main():
 
     # Initialize variables
     init_session_state()
+    pipeline_service = get_pipeline_service()
     try:
-        pipeline_service = get_pipeline_service()
+        pipeline_service.initialize()
     except Exception as e:
         render_header()
         st.error("🎙️ **Azure Speech SDK Initialization Failed**")

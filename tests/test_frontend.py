@@ -65,7 +65,6 @@ class TestFrontendDashboard(unittest.TestCase):
         service = main_app.get_pipeline_service()
         
         self.assertEqual(service, mock_instance)
-        mock_instance.initialize.assert_called_once()
 
     @patch("app.main.st.markdown")
     def test_render_header_invokes_markdown(self, mock_markdown):
