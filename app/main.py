@@ -573,8 +573,9 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Check settings validation
+    # Check settings validation and reload settings at runtime
     from config.settings import settings
+    settings.load()
     if not settings.is_valid:
         render_header()
         st.error("🔑 **Azure Credentials Missing or Invalid**")

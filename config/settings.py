@@ -33,6 +33,20 @@ class Settings:
     """
     
     def __init__(self):
+        self.is_valid = False
+        self.validation_error = "Configuration not loaded yet."
+        self.AZURE_SPEECH_KEY = ""
+        self.AZURE_SPEECH_REGION = ""
+        self.AZURE_LANGUAGE_KEY = ""
+        self.AZURE_LANGUAGE_ENDPOINT = ""
+        self.AZURE_STORAGE_CONNECTION_STRING = ""
+        self.BLOB_CONTAINER_NAME = "meeting-data"
+        
+        # Load once initially
+        self.load()
+
+    def load(self) -> None:
+        """Loads and validates configuration from environment and streamlit secrets."""
         # Helper to get configuration from environment or streamlit secrets
         def get_config(key: str, default: str = "") -> str:
             val = os.getenv(key, "")
@@ -73,21 +87,21 @@ class Settings:
             return str(val) if val else default
 
         # 1. Azure AI Speech Settings
-        self.AZURE_SPEECH_KEY: str = get_config("AZURE_SPEECH_KEY", "").strip()
-        self.AZURE_SPEECH_REGION: str = get_config("AZURE_SPEECH_REGION", "").strip()
+        self.AZURE_SPEECH_KEY = get_config("AZURE_SPEECH_KEY", "").strip()
+        self.AZURE_SPEECH_REGION = get_config("AZURE_SPEECH_REGION", "").strip()
 
         # 2. Azure AI Language Settings
-        self.AZURE_LANGUAGE_KEY: str = get_config("AZURE_LANGUAGE_KEY", "").strip()
-        self.AZURE_LANGUAGE_ENDPOINT: str = get_config("AZURE_LANGUAGE_ENDPOINT", "").strip()
+        self.AZURE_LANGUAGE_KEY = get_config("AZURE_LANGUAGE_KEY", "").strip()
+        self.AZURE_LANGUAGE_ENDPOINT = get_config("AZURE_LANGUAGE_ENDPOINT", "").strip()
 
         # 3. Azure Storage Settings
-        self.AZURE_STORAGE_CONNECTION_STRING: str = get_config("AZURE_STORAGE_CONNECTION_STRING", "").strip()
-        self.BLOB_CONTAINER_NAME: str = get_config("BLOB_CONTAINER_NAME", "meeting-data").strip()
+        self.AZURE_STORAGE_CONNECTION_STRING = get_config("AZURE_STORAGE_CONNECTION_STRING", "").strip()
+        self.BLOB_CONTAINER_NAME = get_config("BLOB_CONTAINER_NAME", "meeting-data").strip()
 
         self.is_valid = True
         self.validation_error = None
 
-        # Automatically trigger configuration validation at instantiation
+        # Trigger configuration validation
         try:
             self.validate()
         except ConfigurationError as e:
