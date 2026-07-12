@@ -84,7 +84,9 @@ class Settings:
                                         break
                 except Exception as e:
                     logger.warning(f"Error reading secret {key}: {str(e)}")
-            return str(val) if val else default
+            if val:
+                val = str(val).strip().strip("'\"").strip()
+            return val if val else default
 
         # 1. Azure AI Speech Settings
         self.AZURE_SPEECH_KEY = get_config("AZURE_SPEECH_KEY", "").strip()
