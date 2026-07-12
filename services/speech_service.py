@@ -77,7 +77,10 @@ class SpeechService:
         except Exception as e:
             self._is_initialized = False
             logger.error(f"Failed to initialize SpeechConfig: {str(e)}")
-            raise AzureSpeechError("SDK Initialization Failed", str(e))
+            key_val = str(settings.AZURE_SPEECH_KEY) if settings.AZURE_SPEECH_KEY else ""
+            region_val = str(speech_region)
+            diag_info = f"Error: {str(e)} | KeyLen: {len(key_val)} ('{key_val[:3]}...{key_val[-3:]}' if key_val else 'EMPTY') | Region: '{region_val}'"
+            raise AzureSpeechError("SDK Initialization Failed", diag_info)
 
     def validate_connection(self) -> bool:
         """
