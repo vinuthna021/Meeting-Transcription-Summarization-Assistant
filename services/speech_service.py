@@ -77,10 +77,23 @@ class SpeechService:
         except Exception as e:
             self._is_initialized = False
             logger.error(f"Failed to initialize SpeechConfig: {str(e)}")
-            key_val = str(settings.AZURE_SPEECH_KEY) if settings.AZURE_SPEECH_KEY else ""
-            region_val = str(speech_region)
-            diag_info = f"Error: {str(e)} | KeyLen: {len(key_val)} ('{key_val[:3]}...{key_val[-3:]}' if key_val else 'EMPTY') | Region: '{region_val}'"
-            raise AzureSpeechError("SDK Initialization Failed", diag_info)
+            
+            internal_diag = []
+            try:
+                import sys
+                internal_diag.append(f"Original error: {str(e)}")
+                internal_diag.append(f"sys.modules keys: {[k for k in sys.modules.keys() if 'settings' in k]}")
+                internal_diag.append(f"key len: {len(settings.AZURE_SPEECH_KEY) if settings.AZURE_SPEECH_KEY else 0}")
+                internal_diag.append(f"region: '{speech_region}'")
+                try:
+                    t_config = speechsdk.SpeechConfig(subscription=settings.AZURE_SPEECH_KEY, region=speech_region)
+                    internal_diag.append("Test with current key: SUCCESS")
+                except Exception as t_err:
+                    internal_diag.append(f"Test with current key failed: {str(t_err)}")
+            except Exception as diag_err:
+                internal_diag.append(f"Diag failed: {str(diag_err)}")
+                
+            raise AzureSpeechError("SDK Initialization Failed", " | ".join(internal_diag))
 
     def validate_connection(self) -> bool:
         """
