@@ -628,11 +628,33 @@ def main():
     except Exception as e:
         render_header()
         st.error("🎙️ **Azure Speech SDK Initialization Failed**")
+        
+        # Safely compile diagnostic details about settings values to identify issues
+        diagnostics = []
+        try:
+            from config.settings import settings
+            for attr in ["AZURE_SPEECH_KEY", "AZURE_SPEECH_REGION", "AZURE_LANGUAGE_KEY", "AZURE_LANGUAGE_ENDPOINT", "AZURE_STORAGE_CONNECTION_STRING", "BLOB_CONTAINER_NAME"]:
+                val = getattr(settings, attr, "")
+                if val:
+                    val_str = str(val)
+                    prefix = val_str[:3]
+                    suffix = val_str[-3:]
+                    diagnostics.append(f"- **{attr}**: length={len(val_str)}, format='{prefix}...{suffix}'")
+                else:
+                    diagnostics.append(f"- **{attr}**: (EMPTY)")
+        except Exception as diag_err:
+            diagnostics.append(f"Failed to generate settings diagnostics: {str(diag_err)}")
+
+        diagnostics_md = "\n".join(diagnostics)
+
         st.markdown(f"""
         The Azure Speech SDK could not be initialized with the provided credentials.
         
         **Error Details:**
         > `{getattr(e, 'user_message', str(e))}`
+        
+        **Loaded Settings Diagnostics (Obfuscated):**
+        {diagnostics_md}
         
         ### Troubleshooting:
         * **Check key length/value:** Ensure your `AZURE_SPEECH_KEY` is a valid subscription key.
