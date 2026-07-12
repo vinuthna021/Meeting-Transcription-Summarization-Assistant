@@ -573,13 +573,7 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Force reload config.settings to prevent old cached modules on Streamlit Cloud
-    import importlib
-    import config.settings
-    try:
-        importlib.reload(config.settings)
-    except Exception:
-        pass
+    # Load settings at runtime
     from config.settings import settings
     settings.load()
     if not settings.is_valid:
