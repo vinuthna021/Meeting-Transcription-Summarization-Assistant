@@ -33,17 +33,29 @@ class Settings:
     """
     
     def __init__(self):
+        # Helper to get configuration from environment or streamlit secrets
+        def get_config(key: str, default: str = "") -> str:
+            val = os.getenv(key, "")
+            if not val:
+                try:
+                    import streamlit as st
+                    if hasattr(st, "secrets") and key in st.secrets:
+                        val = st.secrets[key]
+                except Exception:
+                    pass
+            return str(val) if val else default
+
         # 1. Azure AI Speech Settings
-        self.AZURE_SPEECH_KEY: str = os.getenv("AZURE_SPEECH_KEY", "").strip()
-        self.AZURE_SPEECH_REGION: str = os.getenv("AZURE_SPEECH_REGION", "").strip()
+        self.AZURE_SPEECH_KEY: str = get_config("AZURE_SPEECH_KEY", "").strip()
+        self.AZURE_SPEECH_REGION: str = get_config("AZURE_SPEECH_REGION", "").strip()
 
         # 2. Azure AI Language Settings
-        self.AZURE_LANGUAGE_KEY: str = os.getenv("AZURE_LANGUAGE_KEY", "").strip()
-        self.AZURE_LANGUAGE_ENDPOINT: str = os.getenv("AZURE_LANGUAGE_ENDPOINT", "").strip()
+        self.AZURE_LANGUAGE_KEY: str = get_config("AZURE_LANGUAGE_KEY", "").strip()
+        self.AZURE_LANGUAGE_ENDPOINT: str = get_config("AZURE_LANGUAGE_ENDPOINT", "").strip()
 
         # 3. Azure Storage Settings
-        self.AZURE_STORAGE_CONNECTION_STRING: str = os.getenv("AZURE_STORAGE_CONNECTION_STRING", "").strip()
-        self.BLOB_CONTAINER_NAME: str = os.getenv("BLOB_CONTAINER_NAME", "meeting-data").strip()
+        self.AZURE_STORAGE_CONNECTION_STRING: str = get_config("AZURE_STORAGE_CONNECTION_STRING", "").strip()
+        self.BLOB_CONTAINER_NAME: str = get_config("BLOB_CONTAINER_NAME", "meeting-data").strip()
 
         self.is_valid = True
         self.validation_error = None
