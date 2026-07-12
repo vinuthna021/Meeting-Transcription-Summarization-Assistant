@@ -1,9 +1,18 @@
 import os
 import sys
+import importlib
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
+
+# Force reload submodules to ensure Streamlit Cloud uses the latest pushed code
+for module_name in ["config.settings", "utils.error_handler", "services.speech_service", "services.language_service", "services.storage_service", "services.pipeline_service"]:
+    if module_name in sys.modules:
+        try:
+            importlib.reload(sys.modules[module_name])
+        except Exception:
+            pass
 
 import tempfile
 import streamlit as st
