@@ -31,8 +31,19 @@ class Settings:
     Loads, parses, and validates required environment variables at application startup.
     Fails fast if any credentials or configurations are invalid.
     """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Settings, cls).__new__(cls, *args, **kwargs)
+            cls._instance._initialized = False
+        return cls._instance
     
     def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
+        
         self.is_valid = False
         self.validation_error = "Configuration not loaded yet."
         self.AZURE_SPEECH_KEY = ""
