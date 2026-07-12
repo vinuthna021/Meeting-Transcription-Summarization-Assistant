@@ -680,6 +680,14 @@ def main():
 
         sdk_test_results_md = "\n".join(sdk_test_results)
 
+        # Get current git commit hash
+        commit_hash = "unknown"
+        try:
+            import subprocess
+            commit_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
+        except Exception:
+            pass
+
         st.markdown(f"""
         The Azure Speech SDK could not be initialized with the provided credentials.
         
@@ -687,6 +695,8 @@ def main():
         > `{getattr(e, 'user_message', str(e))}`
         
         {key_warning_md}
+        
+        **Deployed Commit Version:** `{commit_hash}`
         
         **Native SDK Constructor Test Results:**
         {sdk_test_results_md}
