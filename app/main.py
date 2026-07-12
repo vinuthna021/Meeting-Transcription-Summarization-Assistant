@@ -641,11 +641,30 @@ def main():
 
         diagnostics_md = "\n".join(diagnostics)
 
+        # Check if key is hexadecimal
+        is_speech_key_hex = True
+        try:
+            from config.settings import settings
+            if settings.AZURE_SPEECH_KEY:
+                is_speech_key_hex = all(c in "0123456789abcdefABCDEF" for c in settings.AZURE_SPEECH_KEY)
+        except Exception:
+            pass
+
+        key_warning_md = ""
+        if not is_speech_key_hex:
+            key_warning_md = """
+> ⚠️ **CRITICAL WARNING:** Your `AZURE_SPEECH_KEY` contains non-hexadecimal characters (such as `k`, `L`, etc.). 
+> Azure Speech Keys must be strictly **32 hexadecimal characters** (only numbers `0-9` and letters `a-f`). 
+> The key you have entered is an 84-character token or string, which is rejected by the SDK library on Linux.
+"""
+
         st.markdown(f"""
         The Azure Speech SDK could not be initialized with the provided credentials.
         
         **Error Details:**
         > `{getattr(e, 'user_message', str(e))}`
+        
+        {key_warning_md}
         
         **Loaded Settings Diagnostics (Obfuscated):**
         {diagnostics_md}

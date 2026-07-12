@@ -96,7 +96,10 @@ class Settings:
                 except Exception as e:
                     logger.warning(f"Error reading secret {key}: {str(e)}")
             if val:
-                val = str(val).strip().strip("'\"").strip()
+                import string
+                val_str = str(val).strip().strip("'\"").strip()
+                # Keep only valid non-whitespace ASCII characters (no hidden unicode, control characters, or zero-width spaces)
+                val = "".join(c for c in val_str if c in (string.ascii_letters + string.digits + string.punctuation))
             return val if val else default
 
         # 1. Azure AI Speech Settings
