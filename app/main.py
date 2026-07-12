@@ -582,9 +582,21 @@ def main():
             "To deploy and run this application on Streamlit Community Cloud, you must configure "
             "your Azure credentials using the Streamlit Secrets manager."
         )
+        # Safely list keys currently present in streamlit secrets for diagnostics
+        present_keys = []
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets") and st.secrets:
+                present_keys = list(st.secrets.keys())
+        except Exception:
+            pass
+
         st.markdown(f"""
         **Validation Error Details:**
         > `{settings.validation_error}`
+        
+        **Available Secret Keys in Cloud Workspace:**
+        > `{present_keys}`
         
         ### How to fix:
         1. Open your Streamlit Community Cloud dashboard.
