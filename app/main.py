@@ -623,7 +623,23 @@ def main():
 
     # Initialize variables
     init_session_state()
-    pipeline_service = get_pipeline_service()
+    try:
+        pipeline_service = get_pipeline_service()
+    except Exception as e:
+        render_header()
+        st.error("🎙️ **Azure Speech SDK Initialization Failed**")
+        st.markdown(f"""
+        The Azure Speech SDK could not be initialized with the provided credentials.
+        
+        **Error Details:**
+        > `{str(e)}`
+        
+        ### Troubleshooting:
+        * **Check key length/value:** Ensure your `AZURE_SPEECH_KEY` is a valid subscription key.
+        * **Check region:** Ensure `AZURE_SPEECH_REGION` is the correct regional identifier associated with your Speech resource (e.g. `eastus`, `westus`).
+        """)
+        render_footer()
+        return
 
     # Layout rendering
     render_header()
