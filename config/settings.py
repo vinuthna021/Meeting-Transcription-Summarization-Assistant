@@ -39,10 +39,37 @@ class Settings:
             if not val:
                 try:
                     import streamlit as st
-                    if hasattr(st, "secrets") and key in st.secrets:
-                        val = st.secrets[key]
-                except Exception:
-                    pass
+                    if hasattr(st, "secrets"):
+                        # 1. Direct dictionary lookup
+                        try:
+                            val = st.secrets[key]
+                        except Exception:
+                            pass
+                        
+                        # 2. Direct attribute lookup
+                        if not val:
+                            try:
+                                val = getattr(st.secrets, key)
+                            except Exception:
+                                pass
+                                
+                        # 3. Case-insensitive keys iteration lookup
+                        if not val:
+                            for k in st.secrets.keys():
+                                if k.upper() == key.upper():
+                                    try:
+                                        val = st.secrets[k]
+                                    except Exception:
+                                        pass
+                                    if not val:
+                                        try:
+                                            val = getattr(st.secrets, k)
+                                        except Exception:
+                                            pass
+                                    if val:
+                                        break
+                except Exception as e:
+                    logger.warning(f"Error reading secret {key}: {str(e)}")
             return str(val) if val else default
 
         # 1. Azure AI Speech Settings
